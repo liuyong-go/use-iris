@@ -7,23 +7,21 @@ import (
 )
 var ConfigTree *toml.Tree
 
+func main(){
+
+}
+
 func init(){
 	//后面做接参数获取配置项路径
 	var err error
 	ConfigTree,err = toml.LoadFile("github.com/use-iris/configs/config.toml")
-	//config.Get("site.domain").(string)
 	if err != nil{
 		fmt.Println(err)
 		return
 	}
 	InitAllDB()
 }
-
-
-func main(){
-
-}
-
+//初始主从库连接
 func InitAllDB(){
 	var intconns = int(ConfigTree.Get("mysql.MaxIdleConns").(int64))
 	var intOpenConns = int(ConfigTree.Get("mysql.MaxOpenConns").(int64))
