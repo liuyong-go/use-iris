@@ -2,13 +2,20 @@ package main
 
 import (
 	"fmt"
+	"github.com/kataras/iris"
 	"github.com/pelletier/go-toml"
 	"github.com/use-iris/libs"
+	"github.com/use-iris/route"
 )
 var ConfigTree *toml.Tree
 
 func main(){
-
+	app := iris.New()
+	route.Routes(app)
+	err := app.Run(iris.Addr(":8080"))
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func init(){
