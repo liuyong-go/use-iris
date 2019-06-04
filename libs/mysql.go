@@ -3,9 +3,10 @@ package libs
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/use-iris/configs"
 	"log"
 	"os"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 
@@ -37,4 +38,31 @@ func (c *DbConfig) InitDB() *gorm.DB {
 	db.DB().SetMaxIdleConns(c.MaxIdleConns) //空闲时最大的连接数
 	db.DB().SetMaxOpenConns(c.MaxOpenConns) //最大的连接数
 	return db
+}
+//初始主从库连接
+func InitAllDB(){
+	var intconns = int(configs.ConfigTree.Get("mysql.MaxIdleConns").(int64))
+	var intOpenConns = int(configs.ConfigTree.Get("mysql.MaxOpenConns").(int64))
+	dbmaster := DbConfig{
+		configs.ConfigTree.Get("mysql.master.host").(string),
+		configs.ConfigTree.Get("mysql.master.port").(string),
+		configs.ConfigTree.Get("mysql.master.database").(string),
+		configs.ConfigTree.Get("mysql.master.user").(string),
+		configs.ConfigTree.Get("mysql.master.password").(string),
+		configs.ConfigTree.Get("mysql.master.charset").(string),
+		intconns,
+		intOpenConns,
+	}
+	DB_MASTER = dbmaster.InitDB()
+	dbslave := DbConfig{
+		configs.ConfigTree.Get("mysql.slave.host").(string),
+		configs.ConfigTree.Get("mysql.slave.port").(string),
+		configs.ConfigTree.Get("mysql.slave.database").(string),
+		configs.ConfigTree.Get("mysql.slave.user").(string),
+		configs.ConfigTree.Get("mysql.slave.password").(string),
+		configs.ConfigTree.Get("mysql.slave.charset").(string),
+		intconns,
+		intOpenConns,
+	}
+	DB_SLAVE = dbslave.InitDB()
 }
