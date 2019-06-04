@@ -2,13 +2,15 @@ package controller
 
 import (
 	"github.com/kataras/iris"
+	"github.com/use-iris/core"
 	"github.com/use-iris/model"
 )
 
 
 type TestController struct {
+	Rest core.RestfulController
 	Cxt iris.Context
-	userModel model.User
+	UserModel model.User
 }
 func (c TestController) PostTest() string{
 	return "hello test"
@@ -22,7 +24,7 @@ func (c TestController) Get(){
 }
 func (c TestController) GetInsert() {
 	insertData := map[string]string{"mobile": "15312370015", "nickname": "aiyan"}
-	err := c.userModel.Insert(insertData)
+	err := c.UserModel.Insert(insertData)
 	if err != nil {
 		_, _ = c.Cxt.WriteString(err.Error())
 	}
@@ -32,20 +34,14 @@ func (c TestController) GetInsert() {
 	result["data"] = insertData
 	_, _ = c.Cxt.JSON(result)
 }
-func (c TestController) GetList(){
+func (c TestController) GetList()[]byte{
 	mobile := c.Cxt.FormValue("mobile")
 	if mobile == ""{
-		c.Cxt.WriteString("手机号不能为空")
-		return
+		return c.Rest.ShowError(400,"手机号不能为空")
 	}
-	data,err := c.userModel.GetList(mobile)
+	data,err := c.UserModel.GetList(mobile)
 	if err != nil {
-		c.Cxt.WriteString(err.Error())
+		return c.Rest.ShowError(400,err.Error())
 	}
-	result := map[string]interface{}{
-		"code":200,
-		"status":"success",
-		"data":data,
-	}
-	c.Cxt.JSON(result)
+	return c.Rest.ShowSuccess(data)
 }
