@@ -9,10 +9,9 @@ import (
 	"os"
 )
 
+var	DbSlave *gorm.DB
+var	DbMaster *gorm.DB
 
-
-var DB_SLAVE *gorm.DB
-var DB_MASTER *gorm.DB
 
 
 type DbConfig struct {
@@ -53,7 +52,7 @@ func InitAllDB(){
 		intconns,
 		intOpenConns,
 	}
-	DB_MASTER = dbmaster.InitDB()
+	DbMaster = dbmaster.InitDB()
 	dbslave := DbConfig{
 		configs.ConfigTree.Get("mysql.slave.host").(string),
 		configs.ConfigTree.Get("mysql.slave.port").(string),
@@ -64,5 +63,5 @@ func InitAllDB(){
 		intconns,
 		intOpenConns,
 	}
-	DB_SLAVE = dbslave.InitDB()
+	DbSlave = dbslave.InitDB()
 }
