@@ -22,3 +22,11 @@ func (u *User) Insert(insertValue map[string]string) error{
 	}
 	return nil
 }
+func (u *User)GetList(mobile string) ([]User, error){
+	var data []User
+	err := libs.DbSlave.Where("mobile = ?",mobile).Find(&data).Error
+	if err != nil{
+		return nil,err
+	}
+	return data,nil
+}
