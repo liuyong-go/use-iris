@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/kataras/iris"
+	"github.com/use-iris/configs"
 	"github.com/use-iris/core"
 	"github.com/use-iris/model"
 )
@@ -16,10 +17,12 @@ func (c TestController) PostTest() string{
 	return "hello test"
 
 }
-func (c TestController) GetUser() string{
-	return "hello user"
+func (c TestController) GetUser(){
+	cookieValue := c.Cxt.GetCookie("username",iris.CookieDecode(configs.Sc.Decode))
+	_, _ = c.Cxt.WriteString(cookieValue)
 }
 func (c TestController) Get(){
+	c.Cxt.SetCookieKV("username","ceshi",iris.CookieEncode(configs.Sc.Encode))
 	_, _ = c.Cxt.WriteString("hello index hh")
 }
 func (c TestController) GetInsert() {
